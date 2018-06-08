@@ -16,4 +16,7 @@ COPY --chown=appuser:appuser ./src ./src
 
 COPY --chown=appuser:appuser ./entrypoint.sh .
 ENTRYPOINT ["./entrypoint.sh"]
+
+EXPOSE 5000
+
 CMD ["python"]
