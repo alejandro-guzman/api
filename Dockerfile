@@ -12,6 +12,8 @@ WORKDIR $APP_HOME
 COPY ./requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+COPY --chown=appuser:appuser ./src ./src
+
 COPY --chown=appuser:appuser ./entrypoint.sh .
 ENTRYPOINT ["./entrypoint.sh"]
 CMD ["python"]
