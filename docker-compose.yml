@@ -7,8 +7,8 @@ services:
     ports:
       - "5000:5000"
     command: >
-      /bin/sh -c "
-        python src/__main__.py
+      /bin/bash -c "
+        cd src && python __main__.py
       "
     links:
       - db
