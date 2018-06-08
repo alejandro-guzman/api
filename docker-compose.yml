@@ -10,6 +10,9 @@ services:
       /bin/bash -c "
         cd src && python __main__.py
       "
+    restart: on-failure
+    volumes:
+      - ./:/app
     links:
       - db
     depends_on:
