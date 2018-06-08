@@ -1,8 +1,6 @@
 FROM python:3.6.5-slim-stretch
 LABEL maintainer="a.guillermo.guzman@gmail.com"
 
-RUN apt-get update
-
 RUN groupadd --gid 999 appuser && \
     useradd --system --uid 999 --gid appuser appuser
 USER appuser:appuser
