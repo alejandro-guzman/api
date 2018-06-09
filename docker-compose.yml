@@ -1,5 +1,11 @@
 version: "3.3"
 services:
+  redis:
+    image: redis:4.0.9-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
   db:
     image: mongo:3.6.5-jessie
     ports:
@@ -10,6 +16,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    environment:
+      REDIS_HOST: redis
     ports:
       - "5000:5000"
     command: >
@@ -25,4 +33,5 @@ services:
       - db
 
 volumes:
+  redis-data:
   mongodb-data:
