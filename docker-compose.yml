@@ -28,8 +28,10 @@ services:
     volumes:
       - ./:/app
     links:
+      - redis
       - db
     depends_on:
+      - redis
       - db
 
 volumes:
