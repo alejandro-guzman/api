@@ -1,5 +1,9 @@
 version: "3.3"
 services:
+  rabbit-mq:
+    image: rabbitmq:3.7.5-alpine
+    ports:
+      - "5672:5672"
   redis:
     image: redis:4.0.9-alpine
     ports:
@@ -18,6 +22,7 @@ services:
       dockerfile: Dockerfile
     environment:
       REDIS_HOST: redis
+      RABBITMQ_HOST: rabbit-mq
     ports:
       - "5000:5000"
     command: >
@@ -28,9 +33,11 @@ services:
     volumes:
       - ./:/app
     links:
+      - rabbit-mq
       - redis
       - db
     depends_on:
+      - rabbit-mq
       - redis
       - db
 
