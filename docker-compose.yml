@@ -22,7 +22,10 @@ services:
       dockerfile: Dockerfile
     environment:
       REDIS_HOST: redis
+      REDIS_PORT: 6379
       RABBITMQ_HOST: rabbit-mq
+      MONGO_HOST: db
+      MONGO_PORT: 27017
     ports:
       - "5000:5000"
     command: >
