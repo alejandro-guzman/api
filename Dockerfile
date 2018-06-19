@@ -13,17 +13,13 @@ ENV APP_HOME /app
 WORKDIR $APP_HOME
 
 COPY --chown=appuser:appuser ./requirements.txt .
-
 RUN pip install --no-cache-dir -r requirements.txt
-
-#COPY --chown=appuser:appuser ./src ./src
 
 COPY --chown=appuser:appuser ./entrypoint.sh .
 
 USER appuser:appuser
 
 ENTRYPOINT ["./entrypoint.sh"]
-
 EXPOSE 5000
 
 CMD ["python"]
