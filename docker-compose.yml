@@ -34,7 +34,9 @@ services:
       "
     restart: on-failure
     volumes:
-      - ./:/app
+      - type: bind
+        source: .
+        target: /app
     links:
       - rabbit-mq
       - redis
