@@ -5,6 +5,9 @@ services:
     ports:
       - "5672:5672"
       - "8080:15672"
+    hostname: my-rabbit # https://hub.docker.com/_/rabbitmq/
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
   redis:
     image: redis:4.0.9-alpine
     ports:
@@ -48,5 +51,6 @@ services:
       - db
 
 volumes:
+  rabbitmq-data:
   redis-data:
   mongodb-data:
