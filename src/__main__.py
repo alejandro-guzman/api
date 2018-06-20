@@ -1,13 +1,31 @@
+import json
+from logging.config import dictConfig
 import os
 import socket
 import subprocess
 import time
-import json
 
 from flask import Flask, jsonify
 from redis import StrictRedis
 from pika import BlockingConnection, ConnectionParameters
 from pymongo import MongoClient
+
+
+dictConfig({
+    'version': 1,
+    'formatters': {'default': {
+        'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+    }},
+    'handlers': {'wsgi': {
+        'class': 'logging.StreamHandler',
+        'stream': 'ext://flask.logging.wsgi_errors_stream',
+        'formatter': 'default'
+    }},
+    'root': {
+        'level': 'INFO',
+        'handlers': ['wsgi']
+    }
+})
 
 
 app = Flask(__name__)
@@ -35,15 +53,18 @@ def produce(message):
     })
 
     try:
+        app.logger.info('Trying to publish message: {}'.format(body))
         rmq_channel.basic_publish(exchange='', routing_key='job', body=body)
         resp = dict(result='OK')
     except Exception as e:
+        app.logger.exception('Exception publishing message: {}'.format(body))
         resp = dict(result='ERR', details=str(e))
 
     return jsonify(resp)
 
 @app.route('/set/<key>/<value>')
 def _set(key, value):
+    app.logger.exception('Trying to set {} to {} '.format(key, value))
     red_client.set(key, value)
     return jsonify({
         'result': 'OKAY'
