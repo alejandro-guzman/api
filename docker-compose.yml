@@ -20,9 +20,28 @@ services:
       - "27017:27017"
     volumes:
       - mongodb-data:/data/db
-  app:
+  bar:
     build:
-      context: .
+      context: "$PWD"
+      dockerfile: Dockerfile
+    environment:
+      RABBITMQ_HOST: rabbit-mq
+    command: >
+      /bin/bash -c "
+        cd src/bar/lib/bar && python bar.py
+      "
+    restart: on-failure
+    volumes:
+      - type: bind
+        source: "$PWD"
+        target: /app
+    links:
+      - rabbit-mq
+    depends_on:
+      - rabbit-mq
+  foo:
+    build:
+      context: "$PWD"
       dockerfile: Dockerfile
     environment:
       REDIS_HOST: redis
