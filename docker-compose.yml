@@ -1,5 +1,6 @@
 version: "3.3"
 services:
+
   rabbit-mq:
     image: rabbitmq:3.7.6-management-alpine
     ports:
@@ -8,18 +9,21 @@ services:
     hostname: my-rabbit # https://hub.docker.com/_/rabbitmq/
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
+
   redis:
     image: redis:4.0.9-alpine
     ports:
       - "6379:6379"
     volumes:
       - redis-data:/data
+
   db:
     image: mongo:3.6.5-jessie
     ports:
       - "27017:27017"
     volumes:
       - mongodb-data:/data/db
+
   bar:
     build:
       context: "$PWD"
@@ -39,6 +43,7 @@ services:
       - rabbit-mq
     depends_on:
       - rabbit-mq
+
   foo:
     build:
       context: "$PWD"
