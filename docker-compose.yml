@@ -53,12 +53,12 @@ services:
       - "5000:5000"
     command: >
       /bin/bash -c "
-        cd src && python __main__.py
+        cd src/foo/lib/foo && python foo.py
       "
     restart: on-failure
     volumes:
       - type: bind
-        source: .
+        source: "$PWD"
         target: /app
     links:
       - rabbit-mq
