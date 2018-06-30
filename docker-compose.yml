@@ -1,42 +1,32 @@
 version: "3.3"
 services:
 
-#  traefik:
-#    image: traefik:v1.6.4-alpine
-#    command: --api --docker 
-#    ports:
-#      - "80:80"
-#      - "8088:8080"
-#    volumes:
-#      - /var/run/docker.sock:/var/run/docker.sock
-#      - $PWD/traefik.yoml:/etc/traefik/traefik.toml
-##      - type: bind
-##        source: ./traefik.toml
-##        target: ​/etc/​traefik/​traefik.toml
-##      - type: bind
-##        source: /var/run/docker.sock
-##        target: /var/run/docker.sock
+  traefik:
+    command: --api --docker 
+    image: traefik:v1.6.4-alpine
+    ports:
+      - "80:80"
+      - "8088:8080"
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
 
   rabbit-mq:
+    hostname: my-rabbit # https://hub.docker.com/_/rabbitmq/
     image: rabbitmq:3.7.6-management-alpine
     ports:
       - "8080:15672"
-#      - "5672:5672"
-    hostname: my-rabbit # https://hub.docker.com/_/rabbitmq/
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
 
   redis:
     image: redis:4.0.9-alpine
-#    ports:
-#      - "6379:6379"
     volumes:
       - redis-data:/data
 
   db:
     image: mongo:3.6.5-jessie
-#    ports:
-#      - "27017:27017"
     volumes:
       - mongodb-data:/data/db
 
@@ -44,27 +34,36 @@ services:
     build:
       context: "$PWD"
       dockerfile: Dockerfile
-    environment:
-      RABBITMQ_HOST: rabbit-mq
     command: >
       /bin/bash -c "
         sleep 10s
         cd src/bar/lib/bar && python bar.py
       "
+    depends_on:
+      - rabbit-mq
+    environment:
+      RABBITMQ_HOST: rabbit-mq
+    links:
+      - rabbit-mq
     restart: on-failure
     volumes:
       - type: bind
         source: "$PWD"
         target: /app
-    links:
-      - rabbit-mq
-    depends_on:
-      - rabbit-mq
 
   foo:
     build:
       context: "$PWD"
       dockerfile: Dockerfile
+    command: >
+      /bin/bash -c "
+        sleep 10s
+        cd src/foo/lib/foo && python foo.py
+      "
+    depends_on:
+      - rabbit-mq
+      - redis
+      - db
     environment:
       PYTHONBUFFERED: 0
       REDIS_HOST: redis
@@ -72,28 +71,21 @@ services:
       RABBITMQ_HOST: rabbit-mq
       MONGO_HOST: db
       MONGO_PORT: 27017
+    labels:
+      - "traefik.frontend.rule=Host:foo.docker.localhost"
+    links:
+      - rabbit-mq
+      - redis
+      - db
     ports:
       - "5000:5000"
-    command: >
-      /bin/bash -c "
-        sleep 10s
-        cd src/foo/lib/foo && python foo.py
-      "
     restart: on-failure
     volumes:
       - type: bind
         source: "$PWD"
         target: /app
-    links:
-      - rabbit-mq
-      - redis
-      - db
-    depends_on:
-      - rabbit-mq
-      - redis
-      - db
 
 volumes:
+  mongodb-data:
   rabbitmq-data:
   redis-data:
-  mongodb-data:
