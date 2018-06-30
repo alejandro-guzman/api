@@ -1,26 +1,42 @@
 version: "3.3"
 services:
 
+#  traefik:
+#    image: traefik:v1.6.4-alpine
+#    command: --api --docker 
+#    ports:
+#      - "80:80"
+#      - "8088:8080"
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
+#      - $PWD/traefik.yoml:/etc/traefik/traefik.toml
+##      - type: bind
+##        source: ./traefik.toml
+##        target: ​/etc/​traefik/​traefik.toml
+##      - type: bind
+##        source: /var/run/docker.sock
+##        target: /var/run/docker.sock
+
   rabbit-mq:
     image: rabbitmq:3.7.6-management-alpine
     ports:
-      - "5672:5672"
       - "8080:15672"
+#      - "5672:5672"
     hostname: my-rabbit # https://hub.docker.com/_/rabbitmq/
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
 
   redis:
     image: redis:4.0.9-alpine
-    ports:
-      - "6379:6379"
+#    ports:
+#      - "6379:6379"
     volumes:
       - redis-data:/data
 
   db:
     image: mongo:3.6.5-jessie
-    ports:
-      - "27017:27017"
+#    ports:
+#      - "27017:27017"
     volumes:
       - mongodb-data:/data/db
 
@@ -32,6 +48,7 @@ services:
       RABBITMQ_HOST: rabbit-mq
     command: >
       /bin/bash -c "
+        sleep 10s
         cd src/bar/lib/bar && python bar.py
       "
     restart: on-failure
@@ -49,6 +66,7 @@ services:
       context: "$PWD"
       dockerfile: Dockerfile
     environment:
+      PYTHONBUFFERED: 0
       REDIS_HOST: redis
       REDIS_PORT: 6379
       RABBITMQ_HOST: rabbit-mq
@@ -58,6 +76,7 @@ services:
       - "5000:5000"
     command: >
       /bin/bash -c "
+        sleep 10s
         cd src/foo/lib/foo && python foo.py
       "
     restart: on-failure
