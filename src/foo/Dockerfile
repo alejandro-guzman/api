@@ -12,10 +12,10 @@ RUN groupadd --gid 999 appuser && \
 ENV APP_HOME /app
 WORKDIR $APP_HOME
 
-COPY --chown=appuser:appuser ./requirements.txt .
+COPY --chown=appuser:appuser ./src/foo/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY --chown=appuser:appuser ./entrypoint.sh .
+COPY --chown=appuser:appuser ./src/foo/entrypoint.sh .
 
 USER appuser:appuser
 

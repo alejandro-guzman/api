@@ -33,11 +33,10 @@ services:
   bar:
     build:
       context: "$PWD"
-      dockerfile: Dockerfile
+      dockerfile: src/bar/Dockerfile
     command: >
       /bin/bash -c "
-        sleep 10s
-        cd src/bar/lib/bar && python bar.py
+        sleep 10s; cd src/bar/lib/bar && python bar.py
       "
     depends_on:
       - rabbit-mq
@@ -54,11 +53,10 @@ services:
   foo:
     build:
       context: "$PWD"
-      dockerfile: Dockerfile
+      dockerfile: src/foo/Dockerfile
     command: >
       /bin/bash -c "
-        sleep 10s
-        cd src/foo/lib/foo && python foo.py
+        sleep 10s; cd src/foo/lib/foo && python foo.py
       "
     depends_on:
       - rabbit-mq

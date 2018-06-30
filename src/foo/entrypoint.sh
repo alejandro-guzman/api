@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-echo "entrypoint"
+echo "foo entrypoint"
 
 exec "$@"
